@@ -19,16 +19,13 @@ import argparse
 import cv2  # NOQA (Must import before importing caffe2 due to bug in cv2)
 import numpy as np
 import logging
-import os
-import sys
 import time
-
 
 from caffe2.python import workspace
 import detectron.utils.env as envu
+
 envu.set_up_matplotlib()
 import matplotlib.pyplot as plt
-from IPython import display
 from detectron.core.config import assert_and_infer_cfg
 from detectron.core.config import cfg
 from detectron.core.config import merge_cfg_from_file
@@ -86,7 +83,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main(args):
+def main_densepose(args):
     logger = logging.getLogger(__name__)
     merge_cfg_from_file(args.cfg)
     cfg.NUM_GPUS = 1
@@ -100,10 +97,6 @@ def main(args):
     # else:
     #     im_list = [args.im_or_folder]
     cap = cv2.VideoCapture(0)
-    ret, frame = cap.read()
-
-
-
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -118,7 +111,6 @@ def main(args):
         logger.info('Inference time: {:.3f}s'.format(time.time() - t))
         for k, v in timers.items():
             logger.info(' | {}: {:.3f}s'.format(k, v.average_time))
-        print(cls_segms)
         img, IUV, INDS = vis_utils.vis_one_image_uv(
             # frame[:, :, ::-1],  # BGR -> RGB for visualization
             frame,
@@ -155,7 +147,7 @@ def main(args):
         im3.set_data(IUV)
         fig.canvas.draw()
         frametoshow = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8,
-                            sep='')
+                                    sep=str(''))
         frametoshow = frametoshow.reshape(fig.canvas.get_width_height()[::-1] + (3,))
 
         # img is rgb, convert to opencv's default bgr
@@ -171,9 +163,50 @@ def main(args):
     cv2.destroyAllWindows()
 
 
+def main_detectron(args):
+    logger = logging.getLogger(__name__)
+    merge_cfg_from_file('/home/yym/Soft/detectron/configs/12_2017_baselines/e2e_mask_rcnn_R-101-FPN_2x.yaml')
+    cfg.NUM_GPUS = 1
+    args.weights = cache_url(args.weights, cfg.DOWNLOAD_CACHE)
+    assert_and_infer_cfg(cache_urls=False)
+    model = infer_engine.initialize_model_from_cfg('/home/yym/Soft/detectron/tools/model_final.pkl')
+    dummy_coco_dataset = dummy_datasets.get_coco_dataset()
+
+    cap = cv2.VideoCapture(0)
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+
+        # img = frame.copy()
+        timers = defaultdict(Timer)
+        t = time.time()
+        with c2_utils.NamedCudaScope(0):
+            cls_boxes, cls_segms, cls_keyps, cls_bodys = infer_engine.im_detect_all(
+                model, frame, None, timers=timers
+            )
+        logger.info('Inference time: {:.3f}s'.format(time.time() - t))
+        for k, v in timers.items():
+            logger.info(' | {}: {:.3f}s'.format(k, v.average_time))
+        img = vis_utils.vis_one_image_opencv(
+            frame,
+            cls_boxes,
+            cls_segms,
+            cls_keyps,
+            thresh=0.7,
+            show_box=True,
+            dataset=dummy_coco_dataset,
+            show_class=True
+        )
+        cv2.imshow("cam", img)
+        k = cv2.waitKey(120) & 0xFF
+        if k == 27 or k == ord('q'):
+            break
+    cap.release()
+    cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
     workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])
     setup_logging(__name__)
     args = parse_args()
-    main(args)
+    main_detectron(args)

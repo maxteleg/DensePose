@@ -2,19 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="94c97b2e-7ace-496a-a018-ea448d533a16" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/notebooks/infer_camera.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tools/infer_camera.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DensePoseData/demo_data/demo_dp_single_ann.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DensePoseData/demo_data/synth_UV_example.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DensePoseData/demo_data/texture_atlas_200.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DensePoseData/demo_data/texture_from_SURREAL.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DensePoseData/infer_out/demo_im.jpg.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DensePoseData/infer_out/demo_im_INDS.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DensePoseData/infer_out/demo_im_IUV.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/detectron/utils/vis.py" beforeDir="false" afterPath="$PROJECT_DIR$/detectron/utils/vis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notebooks/DensePose-COCO-on-SMPL.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/DensePose-COCO-on-SMPL.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notebooks/DensePose-RCNN-Visualize-Results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/DensePose-RCNN-Visualize-Results.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/infer_simple.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/infer_simple.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/infer_camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/infer_camera.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,11 +18,8 @@
       <file leaf-file-name="infer_camera.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tools/infer_camera.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1800">
-              <caret line="121" column="45" lean-forward="true" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
-              <folding>
-                <element signature="e#385#423#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="165">
+              <caret line="11" column="38" lean-forward="true" selection-start-line="11" selection-start-column="38" selection-end-line="11" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -40,29 +27,11 @@
       <file leaf-file-name="vis.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/detectron/utils/vis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="197">
-              <caret line="272" column="10" lean-forward="true" selection-start-line="272" selection-start-column="10" selection-end-line="272" selection-end-column="10" />
+            <state relative-caret-position="624">
+              <caret line="641" column="30" selection-start-line="641" selection-start-column="30" selection-end-line="641" selection-end-column="30" />
               <folding>
                 <element signature="e#322#360#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DensePose-RCNN-Visualize-Results.ipynb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/notebooks/DensePose-RCNN-Visualize-Results.ipynb">
-          <provider selected="true" editor-type-id="ipnb-editor">
-            <state>
-              <selected id="0" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="infer_simple.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tools/infer_simple.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="249">
-              <caret line="25" column="35" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -88,8 +57,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/tools/infer_simple.py" />
-        <option value="$PROJECT_DIR$/detectron/utils/vis.py" />
         <option value="$PROJECT_DIR$/notebooks/infer_camera.ipynb" />
+        <option value="$PROJECT_DIR$/detectron/utils/vis.py" />
         <option value="$PROJECT_DIR$/tools/infer_camera.py" />
       </list>
     </option>
@@ -100,12 +69,14 @@
     <option name="width" value="1400" />
     <option name="height" value="953" />
   </component>
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -113,25 +84,16 @@
               <item name="densepose" type="b2602c69:ProjectViewProjectNode" />
               <item name="densepose" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="densepose" type="b2602c69:ProjectViewProjectNode" />
-              <item name="densepose" type="462c0819:PsiDirectoryNode" />
-              <item name="notebooks" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="densepose" type="b2602c69:ProjectViewProjectNode" />
-              <item name="densepose" type="462c0819:PsiDirectoryNode" />
-              <item name="tools" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="vcs.Subversion" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../detectron" />
+    <property name="settings.editor.selected.configurable" value="Errors" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -199,9 +161,9 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list>
+      <item itemvalue="Jupyter Notebook.densepose" />
       <item itemvalue="Python.infer_camera" />
       <item itemvalue="Python.infer_simple" />
-      <item itemvalue="Jupyter Notebook.densepose" />
     </list>
     <recent_temporary>
       <list>
@@ -227,10 +189,10 @@
     <frame x="213" y="52" width="1400" height="953" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24964234" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32978722" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32978722" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -268,17 +230,52 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/tools/infer_camera.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="60" column="16" lean-forward="true" selection-start-line="60" selection-start-column="16" selection-end-line="60" selection-end-column="16" />
+        <state relative-caret-position="1575">
+          <caret line="121" column="45" lean-forward="true" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/detectron/utils/vis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3885">
+          <caret line="272" column="10" lean-forward="true" selection-start-line="272" selection-start-column="10" selection-end-line="272" selection-end-column="10" />
           <folding>
-            <element signature="e#385#423#0" expanded="true" />
+            <element signature="e#322#360#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/notebooks/DensePose-RCNN-Visualize-Results.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/tools/infer_simple.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="249">
+        <state relative-caret-position="375">
+          <caret line="25" column="35" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/infer_camera.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="60" column="16" lean-forward="true" selection-start-line="60" selection-start-column="16" selection-end-line="60" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/notebooks/infer_camera.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/infer_simple.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-786">
           <caret line="25" column="35" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="35" />
         </state>
       </provider>
@@ -290,17 +287,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/notebooks/infer_camera.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/detectron/utils/vis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="272" column="10" lean-forward="true" selection-start-line="272" selection-start-column="10" selection-end-line="272" selection-end-column="10" />
+        <state relative-caret-position="624">
+          <caret line="641" column="30" selection-start-line="641" selection-start-column="30" selection-end-line="641" selection-end-column="30" />
           <folding>
             <element signature="e#322#360#0" expanded="true" />
           </folding>
@@ -309,11 +299,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tools/infer_camera.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1800">
-          <caret line="121" column="45" lean-forward="true" selection-start-line="121" selection-start-column="45" selection-end-line="121" selection-end-column="45" />
-          <folding>
-            <element signature="e#385#423#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="11" column="38" lean-forward="true" selection-start-line="11" selection-start-column="38" selection-end-line="11" selection-end-column="38" />
         </state>
       </provider>
     </entry>
