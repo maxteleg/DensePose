@@ -17,14 +17,18 @@ from __future__ import unicode_literals
 from collections import defaultdict
 import argparse
 import cv2  # NOQA (Must import before importing caffe2 due to bug in cv2)
-import glob
+import numpy as np
 import logging
 import os
 import sys
 import time
 
-from caffe2.python import workspace
 
+from caffe2.python import workspace
+import detectron.utils.env as envu
+envu.set_up_matplotlib()
+import matplotlib.pyplot as plt
+from IPython import display
 from detectron.core.config import assert_and_infer_cfg
 from detectron.core.config import cfg
 from detectron.core.config import merge_cfg_from_file
@@ -73,9 +77,9 @@ def parse_args():
         default='jpg',
         type=str
     )
-    parser.add_argument(
-        '--im_or_folder', dest='im_or_folder', help='image or folder of images', default='../DensePoseData/demo_data/demo_im.jpg'
-    )
+    # parser.add_argument(
+    #     'im_or_folder', help='image or folder of images', default=None
+    # )
     # if len(sys.argv) == 1:
     #     parser.print_help()
     #     sys.exit(1)
@@ -84,7 +88,6 @@ def parse_args():
 
 def main(args):
     logger = logging.getLogger(__name__)
-
     merge_cfg_from_file(args.cfg)
     cfg.NUM_GPUS = 1
     args.weights = cache_url(args.weights, cfg.DOWNLOAD_CACHE)
@@ -92,50 +95,84 @@ def main(args):
     model = infer_engine.initialize_model_from_cfg(args.weights)
     dummy_coco_dataset = dummy_datasets.get_coco_dataset()
 
-    if os.path.isdir(args.im_or_folder):
-        im_list = glob.iglob(args.im_or_folder + '/*.' + args.image_ext)
-    else:
-        im_list = [args.im_or_folder]
+    # if os.path.isdir(args.im_or_folder):
+    #     im_list = glob.iglob(args.im_or_folder + '/*.' + args.image_ext)
+    # else:
+    #     im_list = [args.im_or_folder]
+    cap = cv2.VideoCapture(0)
+    ret, frame = cap.read()
 
-    for i, im_name in enumerate(im_list):
-        out_name = os.path.join(
-            args.output_dir, '{}'.format(os.path.basename(im_name) + '.pdf')
-        )
-        logger.info('Processing {} -> {}'.format(im_name, out_name))
-        im = cv2.imread(im_name)
+
+
+
+    while cap.isOpened():
+        ret, frame = cap.read()
+
+        # img = frame.copy()
         timers = defaultdict(Timer)
         t = time.time()
         with c2_utils.NamedCudaScope(0):
             cls_boxes, cls_segms, cls_keyps, cls_bodys = infer_engine.im_detect_all(
-                model, im, None, timers=timers
+                model, frame, None, timers=timers
             )
         logger.info('Inference time: {:.3f}s'.format(time.time() - t))
         for k, v in timers.items():
             logger.info(' | {}: {:.3f}s'.format(k, v.average_time))
-        if i == 0:
-            logger.info(
-                ' \ Note: inference on the first image will be slower than the '
-                'rest (caches and auto-tuning need to warm up)'
-            )
-
-        vis_utils.vis_one_image(
-            im[:, :, ::-1],  # BGR -> RGB for visualization
-            im_name,
-            args.output_dir,
+        print(cls_segms)
+        img, IUV, INDS = vis_utils.vis_one_image_uv(
+            # frame[:, :, ::-1],  # BGR -> RGB for visualization
+            frame,
             cls_boxes,
             cls_segms,
             cls_keyps,
             cls_bodys,
-            dataset=dummy_coco_dataset,
-            box_alpha=0.3,
             show_class=True,
-            thresh=0.7,
-            kp_thresh=2
+            show_box=True,
+            dataset=dummy_coco_dataset
         )
+
+        # ADD CODE HERE
+        t = time.time()
+        fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+        axs[0].axis('off')
+        axs[1].axis('off')
+        axs[2].axis('off')
+        plt.axis('off')
+        ax1 = fig.add_subplot(131)
+        plt.contour(IUV[:, :, 1] / 256., 10, linewidths=1)
+        plt.contour(IUV[:, :, 2] / 256., 10, linewidths=1)
+        plt.contour(INDS, linewidths=4)
+        ax2 = fig.add_subplot(132)
+        ax3 = fig.add_subplot(133)
+        im1 = ax1.imshow(frame)
+        im2 = ax2.imshow(frame)
+        im3 = ax3.imshow(frame)
+        # plt.contour(IUV[:, :, 1] / 256., 10, linewidths=1)
+        # plt.contour(IUV[:, :, 2] / 256., 10, linewidths=1)
+        # plt.contour(INDS, linewidths=4)
+        im1.set_data(img)
+        im2.set_data(img)
+        im3.set_data(IUV)
+        fig.canvas.draw()
+        frametoshow = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8,
+                            sep='')
+        frametoshow = frametoshow.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+
+        # img is rgb, convert to opencv's default bgr
+        # frametoshow = cv2.cvtColor(frametoshow, cv2.COLOR_RGB2BGR)
+        logger.info('Draw time: {:.3f}s'.format(time.time() - t))
+        cv2.imshow("cam", frametoshow)
+        k = cv2.waitKey(300) & 0xFF
+        if k == 27:
+            break
+
+    plt.ioff()
+    cap.release()
+    cv2.destroyAllWindows()
+
 
 
 if __name__ == '__main__':
-
     workspace.GlobalInit(['caffe2', '--caffe2_log_level=0'])
     setup_logging(__name__)
     args = parse_args()

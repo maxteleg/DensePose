@@ -122,6 +122,7 @@ def vis_class(img, pos, class_str, font_scale=0.35):
 
 def vis_bbox(img, bbox, thick=1):
     """Visualizes a bounding box."""
+    img.astype(np.uint8)
     (x0, y0, w, h) = bbox
     x1, y1 = int(x0 + w), int(y0 + h)
     x0, y0 = int(x0), int(y0)
@@ -229,6 +230,7 @@ def vis_one_image_opencv(
 
         # show mask
         if segms is not None and len(segms) > i:
+
             color_mask = color_list[mask_color_id % len(color_list), 0:3]
             mask_color_id += 1
             im = vis_mask(im, masks[..., i], color_mask)
@@ -238,6 +240,88 @@ def vis_one_image_opencv(
             im = vis_keypoints(im, keypoints[i], kp_thresh)
 
     return im
+
+def vis_one_image_uv(
+        im, boxes, segms=None, keypoints=None, body_uv=None, thresh=0.9, kp_thresh=2,
+        show_box=False, dataset=None, show_class=False):
+    """Constructs a numpy array with the detections visualized."""
+    im.astype(np.uint8)
+    if isinstance(boxes, list):
+        boxes, segms, keypoints, classes = convert_from_cls_format(
+            boxes, segms, keypoints)
+
+    if boxes is None or boxes.shape[0] == 0 or max(boxes[:, 4]) < thresh:
+        return im
+
+    dataset_keypoints, _ = keypoint_utils.get_keypoints()
+    if segms is not None and len(segms) > 0:
+        masks = mask_util.decode(segms)
+    color_list = colormap(rgb=True) / 255
+    kp_lines = kp_connections(dataset_keypoints)
+    cmap = plt.get_cmap('rainbow')
+    colors = [cmap(i) for i in np.linspace(0, 1, len(kp_lines) + 2)]
+
+
+    # Display in largest to smallest order to reduce occlusion
+    areas = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
+    sorted_inds = np.argsort(-areas)
+
+    IUV_fields = body_uv[1]
+    #
+    All_Coords = np.zeros(im.shape)
+    All_inds = np.zeros([im.shape[0],im.shape[1]])
+    K = 26
+    ##
+    inds = np.argsort(boxes[:,4])
+    ##
+    for i, ind in enumerate(inds):
+        entry = boxes[ind,:]
+        if entry[4] > 0.65:
+            entry=entry[0:4].astype(int)
+            ####
+            output = IUV_fields[ind]
+            ####
+            All_Coords_Old = All_Coords[ entry[1] : entry[1]+output.shape[1],entry[0]:entry[0]+output.shape[2],:]
+            All_Coords_Old[All_Coords_Old==0]=output.transpose([1,2,0])[All_Coords_Old==0]
+            All_Coords[ entry[1] : entry[1]+output.shape[1],entry[0]:entry[0]+output.shape[2],:]= All_Coords_Old
+            ###
+            CurrentMask = (output[0,:,:]>0).astype(np.float32)
+            All_inds_old = All_inds[ entry[1] : entry[1]+output.shape[1],entry[0]:entry[0]+output.shape[2]]
+            All_inds_old[All_inds_old==0] = CurrentMask[All_inds_old==0]*i
+            All_inds[ entry[1] : entry[1]+output.shape[1],entry[0]:entry[0]+output.shape[2]] = All_inds_old
+    #
+    All_Coords[:,:,1:3] = 255. * All_Coords[:,:,1:3]
+    All_Coords[All_Coords>255] = 255.
+    All_Coords = All_Coords.astype(np.uint8)
+    All_inds = All_inds.astype(np.uint8)
+
+    for i in sorted_inds:
+        bbox = boxes[i, :4]
+        score = boxes[i, -1]
+        if score < thresh:
+            continue
+
+        # show box (off by default)
+        if show_box:
+            im = vis_bbox(
+                im, (bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]))
+
+        # show class (off by default)
+        if show_class:
+            class_str = get_class_string(classes[i], score, dataset)
+            im = vis_class(im, (bbox[0], bbox[1] - 2), class_str)
+
+        # show mask
+        if segms is not None and len(segms) > i:
+            color_mask = color_list[mask_color_id % len(color_list), 0:3]
+            mask_color_id += 1
+            im = vis_mask(im, masks[..., i], color_mask)
+
+        # show keypoints
+        if keypoints is not None and len(keypoints) > i:
+            im = vis_keypoints(im, keypoints[i], kp_thresh)
+
+    return im, All_Coords, All_inds
 
 
 def vis_one_image(
