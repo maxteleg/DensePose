@@ -20,6 +20,8 @@ import cv2  # NOQA (Must import before importing caffe2 due to bug in cv2)
 import numpy as np
 import logging
 import time
+import pickle
+from mpl_toolkits.mplot3d import axes3d, Axes3D
 
 from caffe2.python import workspace
 import detectron.utils.env as envu
@@ -36,6 +38,7 @@ import detectron.core.test_engine as infer_engine
 import detectron.datasets.dummy_datasets as dummy_datasets
 import detectron.utils.c2 as c2_utils
 import detectron.utils.vis as vis_utils
+import detectron.utils.densepose_methods as dp_utils
 
 c2_utils.import_detectron_ops()
 
@@ -83,6 +86,16 @@ def parse_args():
     return parser.parse_args()
 
 
+def smpl_view_set_axis_full_body(ax,azimuth=0):
+    ## Manually set axis
+    ax.view_init(0, azimuth)
+    max_range = 0.55
+    ax.set_xlim( - max_range,   max_range)
+    ax.set_ylim( - max_range,   max_range)
+    ax.set_zlim( -0.2 - max_range,   -0.2 + max_range)
+    ax.axis('off')
+
+
 def main_densepose(args):
     logger = logging.getLogger(__name__)
     merge_cfg_from_file(args.cfg)
@@ -92,6 +105,12 @@ def main_densepose(args):
     model = infer_engine.initialize_model_from_cfg(args.weights)
     dummy_coco_dataset = dummy_datasets.get_coco_dataset()
 
+    with open('/home/yym/Soft/densepose/DensePoseData/basicmodel_m_lbs_10_207_0_v1.0.0.pkl', 'rb') as f:
+        data = pickle.load(f)
+        Vertices = data['v_template']  ##  Loaded vertices of size (6890, 3)
+        X, Y, Z = [Vertices[:, 0], Vertices[:, 1], Vertices[:, 2]]
+
+    DP = dp_utils.DensePoseMethods()
     # if os.path.isdir(args.im_or_folder):
     #     im_list = glob.iglob(args.im_or_folder + '/*.' + args.image_ext)
     # else:
@@ -122,7 +141,11 @@ def main_densepose(args):
             show_box=True,
             dataset=dummy_coco_dataset
         )
-
+        # for i, (ii, uu, vv) in enumerate(zip(IUV[:,:,0], IUV[:,:,1], IUV[:,:,2])):
+        #     # Convert IUV to FBC (faceIndex and barycentric coordinates.)
+        #     FaceIndex, bc1, bc2, bc3 = DP.IUV2FBC(ii, uu, vv)
+        #     # Use FBC to get 3D coordinates on the surface.
+        #     p = DP.FBC2PointOnSurface(FaceIndex, bc1, bc2, bc3, Vertices)
         # ADD CODE HERE
         t = time.time()
         fig, axs = plt.subplots(1, 3, figsize=(15, 5))
@@ -135,6 +158,9 @@ def main_densepose(args):
         plt.contour(IUV[:, :, 2] / 256., 10, linewidths=1)
         plt.contour(INDS, linewidths=4)
         ax2 = fig.add_subplot(132)
+        # ax2.scatter(Z,X,Y,s=0.02,c='k')
+        # ax2.scatter(p[2], p[0], p[1], s=25, c=np.arange(len(p[0])))
+        # smpl_view_set_axis_full_body(ax2)
         ax3 = fig.add_subplot(133)
         im1 = ax1.imshow(frame)
         im2 = ax2.imshow(frame)
@@ -154,8 +180,8 @@ def main_densepose(args):
         # frametoshow = cv2.cvtColor(frametoshow, cv2.COLOR_RGB2BGR)
         logger.info('Draw time: {:.3f}s'.format(time.time() - t))
         cv2.imshow("cam", frametoshow)
-        k = cv2.waitKey(300) & 0xFF
-        if k == 27:
+        k = cv2.waitKey(200) & 0xFF
+        if k == 27 or k == ord('q'):
             break
 
     plt.ioff()
